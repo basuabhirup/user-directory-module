@@ -1,0 +1,13 @@
+.heading {
+  text-align: center;
+  font-size: 2.5rem;
+  color: #2d3436;
+  margin: 1.5rem 0 2.5rem;
+}
+
+.card-container {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+  align-items: center;
+}
