@@ -30,3 +30,29 @@
 .card-bottom {
   margin-top: 30px;
 }
+
+.card .button-container {
+  display: flex;
+  flex-flow: row-reverse nowrap;
+  justify-content: right;
+}
+
+.info {
+  padding: 0.15rem;
+}
+
+.card button {
+  position: relative;
+  color: #00cec9;
+  background-color: transparent;
+  border: none;
+  width: 4rem;
+  height: 4rem;
+  cursor: pointer;
+  outline: none;
+}
+
+.card button:hover {
+  font-weight: 900;
+  color: #00aea9;
+}
