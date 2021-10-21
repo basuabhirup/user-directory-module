@@ -7,53 +7,91 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 function Card(props) {
   const [isBeingEdited, setIsBeingEdited] = useState(false);
+  const [updatedUser, setUpdatedUser] = useState({
+    name: props.name,
+    mobile: props.mobile,
+    email: props.email
+  })
+
+  function handleChange(e) {
+    const name = e.target.name;
+    const value = e.target.value;
+
+      setUpdatedUser({
+          ...updatedUser,
+          [name]: value
+      })
+  }
 
   return (
-    <div className="card">
+    <div>
+    <div className="card" style={{display: isBeingEdited ?  "none" : "inline-block"}}>
       <div className="card-top">
-        <h2 name="user-name" className="user-name" contentEditable={isBeingEdited ? true: false} style={{backgroundColor: isBeingEdited ? "#cff" : "transparent"}}>{props.name}</h2>
+        <h2 name="user-name" className="user-name">{props.name}</h2>
       </div>
       <div className="card-bottom">
-        <p name="mobile" className="info" contentEditable={isBeingEdited ? true: false} style={{backgroundColor: isBeingEdited ? "#cff" : "transparent"}}>{props.mobile}</p>
-        <p name="email" className="info" contentEditable={isBeingEdited ? true: false} style={{backgroundColor: isBeingEdited ? "#cff" : "transparent"}}>{props.email}</p>
+        <p name="mobile" className="info">{props.mobile}</p>
+        <p name="email" className="info">{props.email}</p>
       </div>
       <div className="button-container">
         <button 
           onClick={() => props.deleteUser(props.id)} 
           title="Delete User"
-          style={{display: isBeingEdited ? "none" : "inline"}}
         >
           <DeleteIcon />
         </button>  
         <button 
           onClick={() => setIsBeingEdited(true)} 
           title="Edit User"
-          style={{
-            display: isBeingEdited ? "none" : "inline",
-            }}
         >
           <EditIcon/>
         </button>
+      </div>
+    </div>
+    <form 
+      className="card" 
+      onSubmit={(e) => {
+        e.preventDefault();
+        props.updateUser(props.id, updatedUser.name, updatedUser.mobile, updatedUser.email);
+        setIsBeingEdited(false);
+        setUpdatedUser({
+          name: updatedUser.name,
+          mobile: updatedUser.mobile,
+          email: updatedUser.email
+        })
+      }}  
+      style={{display: isBeingEdited ? "inline-block" : "none"}}
+    >
+      <div className="card-top">
+        <input name="name" onChange={handleChange} value={updatedUser.name} />
+      </div>
+      <div className="card-bottom">
+        <input name="mobile" className="info" onChange={handleChange} value={updatedUser.mobile} />
+        <input name="email" className="info" onChange={handleChange} value={updatedUser.email} />
+      </div>
+      <div className="button-container">
         <button 
+          type="reset"
           onClick={() => {
-            props.resetUser();
-            setIsBeingEdited(false)}} 
+            setIsBeingEdited(false);
+            setUpdatedUser({
+              name: props.name,
+              mobile: props.mobile,
+              email: props.email
+            })
+          }}
           title="Cancel Editing"
-          style={{display: isBeingEdited ? "inline" : "none"}}
         >
           <CancelIcon/>
         </button>  
         <button 
-          onClick={() => {
-              props.updateUser(props.id, props.name, props.mobile, props.email);
-              setIsBeingEdited(false);
-            }} 
+          type="submit"
           title="Update User"
-          style={{display: isBeingEdited ? "inline" : "none"}}
         >
           <UpdateIcon/>
         </button>
       </div>
+    </form>
     </div>
   );
 }

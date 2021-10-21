@@ -45,19 +45,18 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../Client', 'build', 'index.html'));
 });
 
-// Handle 'GET' requests made on the '/api/users' route to get all users' details:
-app.get('/api/users', (req, res) => {
-  User.find({}, (err, users) => {
-    if(!err) {
-      res.status(200).json(users);
-    } else {
-      res.status(400).json({"error": err});
-    }
+// Handle 'GET' and 'POST' requests made on the '/api/users' route:
+app.route('/api/users')
+  .get((req, res) => {
+    User.find({}, (err, users) => {
+      if(!err) {
+        res.status(200).json(users);
+      } else {
+        res.status(400).json({"error": err});
+      }
+    })
   })
-})
-
-// Handle 'POST' requests made on the '/api/user/add' route to add a user:
-app.post('/api/user/add', (req, res) => {
+  .post((req, res) => {
   const user = new User(req.body);
   user.save(err => {
     if(!err) {
@@ -68,29 +67,41 @@ app.post('/api/user/add', (req, res) => {
   })
 })
 
-// Handle 'PATCH' requests made on the '/api/user/update' route to edit a particular user's details:
-app.patch('/api/user/update', (req, res) => {
-  const id = req.body.objId;
-  User.findByIdAndUpdate(id, req.body, err => {
-    if(!err) {
-      res.status(200).json(`Updated user with id: ${id} !`);
-    } else {
-      res.status(400).json({"error": err});
-    }
+// Handle 'GET', 'PATCH' and 'DELETE' requests made on the '/api/user/:id' route to edit or delete a particular user's details:
+app.route('/api/user/:id')
+  .get((req, res) =>{
+    const id = req.params.id;
+    User.findById(id, (err, user) => {
+      if(!err) {
+        res.status(200).json(user);
+      } else {
+        res.status(400).json({"error": err});
+      }
+    })
   })
-})
-
-// Handle 'DELETE' requests made on the '/api/user/delete' route to delete a particular user:
-app.delete('/api/user/delete', (req, res) => {
-  const id = req.body.objId;
-  User.findByIdAndRemove(id, err => {
-    if(!err) {
-      res.status(200).json(`Deleted user with id: ${id} !`);
-    } else {
-      res.status(400).json({"error": err});
-    }
+  .patch((req, res) => {
+    const id = req.params.id;
+    const name = req.body.name;
+    const mobile = req.body.mobile;
+    const email = req.body.email;
+    User.findByIdAndUpdate(id, {_id: id, name, mobile, email}, err => {
+      if(!err) {
+        res.status(200).json(`Updated user with id: ${id} !`);
+      } else {
+        res.status(400).json({"error": err});
+      }
+    })
   })
-})
+  .delete((req, res) => {
+    const id = req.params.id;
+    User.findByIdAndRemove(id, err => {
+      if(!err) {
+        res.status(200).json(`Deleted user with id: ${id} !`);
+      } else {
+        res.status(400).json({"error": err});
+      }
+    })
+  })
 
 
 // Set listener:

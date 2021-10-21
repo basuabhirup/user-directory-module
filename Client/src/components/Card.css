@@ -18,7 +18,7 @@
   align-items: center;
 }
 
-.card-top .user-name {
+.card-top .user-name, input[name="name"] {
   font-size: 2rem;
   color: #2d3436;
   display: flex;

@@ -20,27 +20,45 @@ function App() {
 }, []);
 
   function addUser(user) {
-    axios.post("/api/user/add", user)
+    axios.post("/api/users", user)
         .then((res) => setUsersArray([...res.data])) 
         .catch((err) => console.error(err));
   }
 
   function updateUser(id, name, mobile, email) {
-    setUsersArray(usersArray.map(user => user.id === id ? {id, name, mobile, email} : user));
-  }
-
-  function resetUser() {
-    setUsersArray(usersArray);
+    axios.patch(`/api/user/${id}`, {name, mobile, email})
+    .then((res) => {
+      if (res.status === 200) {
+        axios.get("/api/users")
+        .then((res) => {
+            if(res.data.length > 0 ) {
+                setUsersArray([...res.data]);
+            } else {
+                setUsersArray([]);
+            }  
+        })
+        .catch((err) => console.error(err));
+      }
+    })
+    .catch((err) => console.error(err));
   }
 
   function deleteUser(id) {
-    axios.delete("/api/user/delete", { data: { objId: id} })
+    axios.delete(`/api/user/${id}`)
+    .then((res) => {
+      if (res.status === 200) {
+        axios.get("/api/users")
         .then((res) => {
-            if (res.status === 200) {
-              setUsersArray(usersArray.filter(user => user._id !== id));
-            }
+            if(res.data.length > 0 ) {
+                setUsersArray([...res.data]);
+            } else {
+                setUsersArray([]);
+            }  
         })
         .catch((err) => console.error(err));
+      }
+    })
+    .catch((err) => console.error(err));
   }
 
   return (
@@ -54,7 +72,6 @@ function App() {
               key={user._id}
               id={user._id}
               updateUser={updateUser}
-              resetUser={resetUser}
               deleteUser={deleteUser}
               name={user.name}
               mobile={user.mobile}
