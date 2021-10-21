@@ -56,6 +56,42 @@ app.get('/api/users', (req, res) => {
   })
 })
 
+// Handle 'POST' requests made on the '/api/user/add' route to add a user:
+app.post('/api/user/add', (req, res) => {
+  const user = new User(req.body);
+  user.save(err => {
+    if(!err) {
+      res.redirect('/api/users');
+    } else {
+      res.status(400).json({"error": err});
+    }
+  })
+})
+
+// Handle 'PATCH' requests made on the '/api/user/update' route to edit a particular user's details:
+app.patch('/api/user/update', (req, res) => {
+  const id = req.body.objId;
+  User.findByIdAndUpdate(id, req.body, err => {
+    if(!err) {
+      res.status(200).json(`Updated user with id: ${id} !`);
+    } else {
+      res.status(400).json({"error": err});
+    }
+  })
+})
+
+// Handle 'DELETE' requests made on the '/api/user/delete' route to delete a particular user:
+app.delete('/api/user/delete', (req, res) => {
+  const id = req.body.objId;
+  User.findByIdAndRemove(id, err => {
+    if(!err) {
+      res.status(200).json(`Deleted user with id: ${id} !`);
+    } else {
+      res.status(400).json({"error": err});
+    }
+  })
+})
+
 
 // Set listener:
 app.listen(port, () => {
