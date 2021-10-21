@@ -29,7 +29,7 @@ const userSchema = new mongoose.Schema ({
     type: String, 
     required: true 
   },
-  mobile: Number,
+  mobile: String,
   email: String
 }, {
   timestamps: true
@@ -45,6 +45,16 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../Client', 'build', 'index.html'));
 });
 
+// Handle 'GET' requests made on the '/api/users' route to get all users' details:
+app.get('/api/users', (req, res) => {
+  User.find({}, (err, users) => {
+    if(!err) {
+      res.status(200).json(users);
+    } else {
+      res.status(400).json({"error": err});
+    }
+  })
+})
 
 
 // Set listener:
