@@ -1,14 +1,28 @@
 import React from "react";
-import Card from "./components/Card";
+import axios from "axios";
 import InputArea from "./components/InputArea";
+import Card from "./components/Card";
 import './App.css';
-import users from "./users";
 
 function App() {
-  const [usersArray, setUsersArray] = React.useState(users);
+  const [usersArray, setUsersArray] = React.useState([]);
+
+  React.useEffect(() => {
+    axios.get("/api/users")
+    .then((res) => {
+        if(res.data.length > 0 ) {
+            setUsersArray([...res.data]);
+        } else {
+            setUsersArray([]);
+        }  
+    })
+    .catch((err) => console.error(err));
+}, []);
 
   function addUser(user) {
-    setUsersArray([...usersArray, user]);
+    axios.post("/api/user/add", user)
+        .then((res) => setUsersArray([...res.data])) 
+        .catch((err) => console.error(err));
   }
 
   function updateUser(id, name, mobile, email) {
@@ -16,11 +30,17 @@ function App() {
   }
 
   function resetUser() {
-    setUsersArray(prevArray => prevArray);
+    setUsersArray(usersArray);
   }
 
   function deleteUser(id) {
-    setUsersArray(usersArray.filter(user => user.id !== id));
+    axios.delete("/api/user/delete", { data: { objId: id} })
+        .then((res) => {
+            if (res.status === 200) {
+              setUsersArray(usersArray.filter(user => user._id !== id));
+            }
+        })
+        .catch((err) => console.error(err));
   }
 
   return (
@@ -28,11 +48,11 @@ function App() {
       <h1 className="heading">User Directory</h1>
       <InputArea onSubmit={addUser}/>
       <div className="card-container">
-        {usersArray.map((user, index) => {
+        {usersArray.map(user => {
           return (
             <Card
-              key={index}
-              id={user.id}
+              key={user._id}
+              id={user._id}
               updateUser={updateUser}
               resetUser={resetUser}
               deleteUser={deleteUser}
