@@ -17,10 +17,25 @@ app.use(express.static(path.join(__dirname, '../Client', 'build')));
 
 
 // Connect to a new MongoDB Database, using Mongoose ODM:
+mongoose.connect(`mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.m5s9h.mongodb.net/userDirectoryDB?retryWrites=true&w=majority`);
 
+mongoose.connection.once('open', () => {
+  console.log(`Connected to Mongo Atlas Database`);
+})
 
 // Create a new collection to store the users' details:
+const userSchema = new mongoose.Schema ({
+	name: { 
+    type: String, 
+    required: true 
+  },
+  mobile: Number,
+  email: String
+}, {
+  timestamps: true
+})
 
+const User = mongoose.model('User', userSchema);
 
 
 // Set API endpoints:
